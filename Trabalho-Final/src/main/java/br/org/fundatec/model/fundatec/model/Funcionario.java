@@ -1,5 +1,6 @@
 package br.org.fundatec.model.fundatec.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class Funcionario {
             allocationSize=100)
     @Column(name = "id")
 
-    private long id;
+    private Integer id;
     @Column(name = "nome")
     private String nome;
 
@@ -27,8 +28,7 @@ public class Funcionario {
     public Funcionario() {
     }
 
-    public Funcionario(long id, String nome) {
-        this.id = id;
+    public Funcionario( String nome) {
         this.nome = nome;
     }
 
@@ -36,7 +36,7 @@ public class Funcionario {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -57,6 +57,23 @@ public class Funcionario {
         return id == that.id && Objects.equals(nome, that.nome) && Objects.equals(votos, that.votos);
     }
 
+    public List<Votos> getVotos() {
+        return votos;
+    }
+
+    public void setVotos(List<Votos> votos) {
+        this.votos = votos;
+    }
+
+    public void add(Votos voto) {
+        if(votos == null) {
+            votos = new ArrayList<>();
+        }
+
+        voto.setFuncionario(this);
+        votos.add(voto);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, nome, votos);
@@ -70,4 +87,6 @@ public class Funcionario {
                 ", votos=" + votos +
                 '}';
     }
+
+
 }

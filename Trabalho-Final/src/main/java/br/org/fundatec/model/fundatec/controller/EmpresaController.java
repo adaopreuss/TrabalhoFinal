@@ -2,18 +2,22 @@ package br.org.fundatec.model.fundatec.controller;
 
 
 
+import br.org.fundatec.model.fundatec.exception.AplicacaoException;
+import br.org.fundatec.model.fundatec.model.Funcionario;
 import br.org.fundatec.model.fundatec.model.Restaurante;
+import br.org.fundatec.model.fundatec.model.Votos;
 import br.org.fundatec.model.fundatec.repository.FuncionarioRepository;
 import br.org.fundatec.model.fundatec.repository.RestauranteRepository;
 
-
-import javax.persistence.PersistenceException;
+import javax.persistence.*;
+import java.util.Calendar;
 import java.util.List;
 
 public class EmpresaController {
 
     private FuncionarioRepository funcionarioRepository;
     private RestauranteRepository restauranteRepository;
+    private EntityManager em;
 
 
     public EmpresaController() {
@@ -22,62 +26,69 @@ public class EmpresaController {
     }
 
 
-    public void inserirAluno(String nome, String materiaNome, Integer nota) throws  AplicacaoException {
+    public void inserirFuncionario(String nome, String restauranteNome, Calendar voto) throws AplicacaoException {
         Restaurante restaurante = restauranteRepository.buscarPorNome(restauranteNome);
 
-        if(restaurante == null) {
-           restaurante = new Restaurante(restauranteNome);
+        if (restaurante == null) {
+            restaurante = new Restaurante(restauranteNome);
         }
 
-        Aluno aluno = new Aluno(nome);
-        aluno.add(new Nota(nota, materia));
+        Funcionario funcionario = new Funcionario(nome);
+        funcionario.add(new Votos(voto, restaurante));
+
 
         try {
-            alunoRepository.inserir(aluno);
-        }catch (PersistenceException e) {
+            funcionarioRepository.inserir(funcionario);
+        } catch (PersistenceException e) {
             e.printStackTrace();
-            throw new AplicacaoException("Falha ao inserir Aluno");
+            throw new AplicacaoException("Falha ao inserir Funcionario");
         }
     }
 
-    public void inserirNota(Integer idAluno, String materiaNome, Integer nota) throws  AplicacaoException {
-        Aluno aluno = alunoRepository.buscar(idAluno);
+    public void inserirNota(Integer idFuncionario, String restauranteNome, Calendar voto) throws AplicacaoException {
+        Funcionario funcionario = funcionarioRepository.buscar(idFuncionario);
 
-        if(aluno == null) {
-            throw new AplicacaoException("Aluno nao encontrado");
+        if (funcionario == null) {
+            throw new AplicacaoException("Funcionario nao encontrado");
+        }
+        Restaurante restaurante = restauranteRepository.buscarPorNome(restauranteNome);
+
+        if (restaurante == null) {
+            restaurante = new Restaurante(restauranteNome);
         }
 
-        Materia materia = materiaRepository.buscarPorNome(materiaNome);
-
-        if(materia == null) {
-            materia = new Materia(materiaNome);
-        }
-
-        aluno.add(new Nota(nota, materia));
+        funcionario.add(new Votos(voto, restaurante));
 
         try {
-            alunoRepository.atualizar(aluno);
-        }catch (PersistenceException e) {
+            funcionarioRepository.atualizar(funcionario);
+        } catch (PersistenceException e) {
             e.printStackTrace();
-            throw new AplicacaoException("Falha ao inserir Nota");
+            throw new AplicacaoException("Falha ao inserir Voto");
         }
     }
 
-    public List<Aluno> listarAlunos() {
-        return alunoRepository.buscar();
+    public List<Funcionario> listarFuncionario() {
+        return funcionarioRepository.buscar();
     }
 
-    public List<Materia> listarMaterias() {
-        return materiaRepository.buscar();
+    public List<Restaurante> listarRestaurante() {
+        return restauranteRepository.buscar();
     }
 
-    public List<Nota> listarNotas(Integer idAluno) throws  AplicacaoException{
-        Aluno aluno = alunoRepository.buscar(idAluno);
+    public List<Votos> busca (Funcionario funcionario, Calendar data){
+        TypedQuery<Votos> query =
+         this.em.createQuery
+                 ("select e from Votos e where e. funcionario = :funcionario and e.data", Votos.class);
+        Query.setParameter(("funcionario"), funcionario);
+        query.setParameter("dada", data, TemporalType.DATE);
 
-        if(aluno == null) {
-            throw new AplicacaoException("Aluno nao encontrado");
+        try {
+            return query.getResultList();
+        }catch (NoResultException e ){
+            return null;
         }
-
-        return aluno.getNotas();
     }
+
+
+    
 }

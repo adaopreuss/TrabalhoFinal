@@ -1,6 +1,8 @@
 package br.org.fundatec.model.fundatec.model;
 
 import javax.persistence.*;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class Votos {
@@ -15,16 +17,27 @@ public class Votos {
     @Column(name = "id")
     private Long id;
 
+   @Temporal(TemporalType.DATE)
     @Column(name = "voto")
-    private String nome;
+    private Calendar data;
+
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_funcionario", referencedColumnName = "id")
+    private Funcionario funcionario;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_empresa", referencedColumnName = "id")
+    private Restaurante restaurante;
 
 
     public Votos() {
+        super();
     }
 
-    public Votos(Long id, String nome) {
-        this.id = id;
-        this.nome = nome;
+    public Votos(Calendar data, Restaurante restaurante) {
+        super();
+        this.data = data;
+        this.restaurante = restaurante;
     }
 
     public Long getId() {
@@ -35,12 +48,28 @@ public class Votos {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Calendar getData() {
+        return data;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setData(Calendar data) {
+        this.data = data;
+    }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    public Restaurante getRestaurante() {
+        return restaurante;
+    }
+
+    public void setRestaurante(Restaurante restaurante) {
+        this.restaurante = restaurante;
     }
 
     @Override
@@ -48,19 +77,22 @@ public class Votos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Votos votos = (Votos) o;
-        return Objects.equals(id, votos.id) && Objects.equals(nome, votos.nome);
+        return Objects.equals(id, votos.id) && Objects.equals(data, votos.data) && Objects.equals(funcionario, votos.funcionario) && Objects.equals(restaurante, votos.restaurante);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nome);
+        return Objects.hash(id, data, funcionario, restaurante);
     }
 
     @Override
     public String toString() {
         return "Votos{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
+                "data=" + data +
+                ", funcionario=" + funcionario +
+                ", restaurante=" + restaurante +
                 '}';
     }
+
+
 }

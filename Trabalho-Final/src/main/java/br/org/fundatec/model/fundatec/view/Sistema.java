@@ -1,12 +1,12 @@
 package br.org.fundatec.model.fundatec.view;
 
-import br.org.fundatec.controller.EscolaController;
-import br.org.fundatec.exception.AplicacaoException;
+
+import br.org.fundatec.model.fundatec.controller.EmpresaController;
 import br.org.fundatec.util.TecladoUtil;
 
 public class Sistema {
 
-    private static EscolaController controller = new EscolaController();
+    private static EmpresaController controller = new EmpresaController();
     private static boolean sair = false;
 
 

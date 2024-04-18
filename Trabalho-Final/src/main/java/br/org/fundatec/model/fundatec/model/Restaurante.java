@@ -13,15 +13,14 @@ public class Restaurante {
             valueColumnName="valor",
             allocationSize=100)
     @Column(name = "id")
-    private long id;
+    private Integer id;
     @Column(name = "nome")
     private String nome;
 
     public Restaurante() {
     }
 
-    public Restaurante(long id, String nome) {
-        this.id = id;
+    public Restaurante( String nome) {
         this.nome = nome;
     }
 
@@ -29,7 +28,7 @@ public class Restaurante {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
